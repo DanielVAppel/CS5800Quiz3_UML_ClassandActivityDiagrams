@@ -7,14 +7,14 @@ if (Play Video?) then (yes)
     :Create PlayCommand;
     :User executes PlayCommand;
     :VideoPlayer plays video;
-    :Notify all observers about playback status;
+    :Playback affects only the current user;
 endif
 
 if (Pause Video?) then (yes)
     :Create PauseCommand;
     :User executes PauseCommand;
     :VideoPlayer pauses video;
-    :Notify all observers about playback status;
+    :Playback affects only the current user;
 endif
 
 if (Adjust Volume?) then (yes)
@@ -22,7 +22,7 @@ if (Adjust Volume?) then (yes)
     :Create VolumeCommand;
     :User executes VolumeCommand;
     :VideoPlayer sets new volume level;
-    :Notify all observers about volume change;
+    :Playback affects only the current user;
 endif
 
 if (Fast Forward or Rewind?) then (yes)
@@ -36,13 +36,13 @@ if (Fast Forward or Rewind?) then (yes)
         :User executes RewindCommand;
         :VideoPlayer rewinds video;
     endif
-    :Notify all observers about playback position;
+    :Playback affects only the current user;
 endif
 
 if (Add Comment?) then (yes)
     :User writes comment;
     :Video adds comment to comment list;
-    :Notify all observers about new comment;
+    :Notify all viewers of new comment [Observer Pattern];
 endif
 
 if (Reply to Comment?) then (yes)
@@ -50,7 +50,20 @@ if (Reply to Comment?) then (yes)
     :Create ReplyCommand;
     :User executes ReplyCommand;
     :Comment adds reply;
-    :Notify all observers about new reply;
+    :Notify all viewers of new reply [Observer Pattern];
+endif
+
+if (Upload Video?) then (yes)
+    :User uploads video file;
+    :Metadata processed by VideoManager [Factory Method for creating metadata objects];
+    :Notify all subscribers of new video [Observer Pattern];
+endif
+
+if (Subscribe to Channel?) then (yes)
+    :User clicks Subscribe button;
+    :Channel's subscriber count is updated;
+    :Notify channel owner of new subscriber [Observer Pattern];
+    :Display updated subscriber count globally;
 endif
 
 stop
