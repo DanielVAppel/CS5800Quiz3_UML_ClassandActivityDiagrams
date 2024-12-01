@@ -1,27 +1,130 @@
 @startuml
-'https://plantuml.com/class-diagram
-
-abstract class AbstractList
-abstract AbstractCollection
-interface List
-interface Collection
-
-List <|-- AbstractList
-Collection <|-- AbstractCollection
-
-Collection <|- List
-AbstractCollection <|- AbstractList
-AbstractList <|-- ArrayList
-
-class ArrayList {
-Object[] elementData
-size()
+interface Observer {
+    + update(String status)
 }
 
-enum TimeUnit {
-DAYS
-HOURS
-MINUTES
+interface Subject {
+    + addObserver(Observer o)
+    + removeObserver(Observer o)
+    + notifyObservers()
 }
 
+class UserProfile {
+    + subscribers: int
+    + videos: List<Video>
+    + adjustVolume(VideoPlayer player, int newVolume)
+    + playVideo(VideoPlayer player)
+    + pauseVideo(VideoPlayer player)
+    + fastForward(VideoPlayer player, int seconds)
+    + rewind(VideoPlayer player, int seconds)
+    + addReply(Comment comment, String replyText)
+    + executeCommand(Command command)
+}
+
+class VideoPlayer implements Subject {
+    + currentVolume: int
+    + playbackPosition: int
+    + isPlaying: boolean
+    + addObserver(Observer o)
+    + removeObserver(Observer o)
+    + notifyObservers()
+    + setVolume(int newVolume)
+    + getVolume(): int
+    + play()
+    + pause()
+    + fastForward(int seconds)
+    + rewind(int seconds)
+}
+
+abstract class Command {
+    + execute()
+}
+
+class VolumeCommand extends Command {
+    - VideoPlayer player
+    - int volumeLevel
+    + execute()
+}
+
+class PlayCommand extends Command {
+    - VideoPlayer player
+    + execute()
+}
+
+class PauseCommand extends Command {
+    - VideoPlayer player
+    + execute()
+}
+
+class FastForwardCommand extends Command {
+    - VideoPlayer player
+    - int seconds
+    + execute()
+}
+
+class RewindCommand extends Command {
+    - VideoPlayer player
+    - int seconds
+    + execute()
+}
+
+class ReplyCommand extends Command {
+    - Comment comment
+    - String replyText
+    + execute()
+}
+
+class VideoControls implements Observer {
+    + currentStatus: String
+    + update(String status)
+}
+
+class Video implements Subject {
+    + title: String
+    + views: int
+    + likeCount: int
+    + dislikeCount: int
+    + comments: List<Comment>
+    + addObserver(Observer o)
+    + removeObserver(Observer o)
+    + notifyObservers()
+    + incrementViews()
+    + addComment(Comment comment)
+    + getComments(): List<Comment>
+}
+
+class Comment implements Subject {
+    + text: String
+    + replies: List<Comment>
+    + addObserver(Observer o)
+    + removeObserver(Observer o)
+    + notifyObservers()
+    + addReply(Comment reply)
+    + getReplies(): List<Comment>
+}
+
+class Channel {
+    + name: String
+    + subscribers: int
+    + addSubscriber()
+    + removeSubscriber()
+}
+
+UserProfile --> Command : executes
+Command <|-- VolumeCommand
+Command <|-- PlayCommand
+Command <|-- PauseCommand
+Command <|-- FastForwardCommand
+Command <|-- RewindCommand
+Command <|-- ReplyCommand
+UserProfile --> VideoPlayer : interacts with
+UserProfile --> Video : watches/comments on
+UserProfile --> Comment : replies to
+VideoPlayer -down-|> Subject
+Video -down-|> Subject
+Comment -down-|> Subject
+Video --> Comment : contains
+Comment "1" --> "*" Comment : has replies
+VideoPlayer --> VideoControls : notifies
+VideoControls -down-|> Observer
 @enduml
