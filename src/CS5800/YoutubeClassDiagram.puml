@@ -104,6 +104,8 @@ class Video implements Subject {
     + incrementViews()
     + addComment(Comment comment)
     + getComments(): List<Comment>
+    + addLike()
+    + addDislike()
 }
 
 class Comment implements Subject {
@@ -116,11 +118,14 @@ class Comment implements Subject {
     + getReplies(): List<Comment>
 }
 
-class Channel {
+class Channel implements Subject {
     + name: String
     + subscribers: int
-    + addSubscriber()
-    + removeSubscriber()
+    + addSubscriber(User user)
+    + removeSubscriber(User user)
+    + notifyObservers()
+    + getSubscriberCount(): int
+    + uploadVideo(Video video)
 }
 
 User --> Command : executes
@@ -139,6 +144,7 @@ Command <|-- ReplyCommand
 VideoPlayer -down-|> Subject
 Video -down-|> Subject
 Comment -down-|> Subject
+Channel -down-|> Subject
 Video --> Comment : contains
 Comment "1" --> "*" Comment : has replies
 VideoPlayer --> VideoControls : notifies
