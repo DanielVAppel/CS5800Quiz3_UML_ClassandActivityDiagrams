@@ -9,16 +9,29 @@ interface Subject {
     + notifyObservers()
 }
 
-class UserProfile {
-    + subscribers: int
-    + videos: List<Video>
+class User {
+    + profile: Profile
+    + executeCommand(Command command)
     + adjustVolume(VideoPlayer player, int newVolume)
     + playVideo(VideoPlayer player)
     + pauseVideo(VideoPlayer player)
     + fastForward(VideoPlayer player, int seconds)
     + rewind(VideoPlayer player, int seconds)
     + addReply(Comment comment, String replyText)
-    + executeCommand(Command command)
+    + addLike(Video video)
+    + addDislike(Video video)
+    + addComment(Video video, String commentText)
+    + subscribeToChannel(Channel channel)
+}
+
+class Profile {
+    + subscribers: int
+    + videos: List<Video>
+    + description: String
+    + getSubscribers(): int
+    + getVideos(): List<Video>
+    + getDescription(): String
+    + addVideo(Video video)
 }
 
 class VideoPlayer implements Subject {
@@ -110,16 +123,19 @@ class Channel {
     + removeSubscriber()
 }
 
-UserProfile --> Command : executes
+User --> Command : executes
+User --> VideoPlayer : interacts with
+User --> Video : watches/comments on
+User --> Comment : replies to
+User --> Channel : subscribes to
+User --> Profile : has
+Profile --> Video : contains
 Command <|-- VolumeCommand
 Command <|-- PlayCommand
 Command <|-- PauseCommand
 Command <|-- FastForwardCommand
 Command <|-- RewindCommand
 Command <|-- ReplyCommand
-UserProfile --> VideoPlayer : interacts with
-UserProfile --> Video : watches/comments on
-UserProfile --> Comment : replies to
 VideoPlayer -down-|> Subject
 Video -down-|> Subject
 Comment -down-|> Subject
