@@ -128,6 +128,23 @@ class Channel implements Subject {
     + uploadVideo(Video video)
 }
 
+interface VideoDatabaseInterface {
+    + getVideo(videoID: String): Video
+    + getVideos(): List<Video>
+}
+
+class Database implements VideoDatabaseInterface {
+    + getVideo(videoID: String): Video
+    + getVideos(): List<Video>
+}
+
+class DatabaseProxy implements VideoDatabaseInterface {
+    - database: Database
+    - cache: Map<String, Video>
+    + getVideo(videoID: String): Video
+    + getVideos(): List<Video>
+}
+
 User --> Command : executes
 User --> VideoPlayer : interacts with
 User --> Video : watches/comments on
@@ -149,4 +166,7 @@ Video --> Comment : contains
 Comment "1" --> "*" Comment : has replies
 VideoPlayer --> VideoControls : notifies
 VideoControls -down-|> Observer
+
+Video <.. DatabaseProxy : accessed via
+DatabaseProxy ..> Database : forwards requests
 @enduml
